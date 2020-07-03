@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data class="UsersBinding">
+
+        <import type="android.view.View" alias="V"/>
+        <variable
+            name="vm"
+            type="com.example.testtask.ui.users.UsersViewModel" />
+    </data>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        bind:onRefresh="@{vm.onRefreshListener}"
+        bind:refreshState="@{vm.isLoading}">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_users"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{vm.isErrorVisible ? V.GONE : V.VISIBLE}"
+                bind:clickHandler="@{vm.onItemClickListener}"
+                bind:data="@{vm.users}"/>
+
+            <include
+                layout="@layout/v_error"
+                android:visibility="@{vm.isErrorVisible ? V.VISIBLE : V.GONE}" />
+
+        </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>
