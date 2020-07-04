@@ -1,8 +1,12 @@
 package com.example.testtask.data.api;
 
+import androidx.lifecycle.LiveData;
 import androidx.loader.content.AsyncTaskLoader;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.testtask.utils.JSONParser;
@@ -14,18 +18,14 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class JsonPlaceHolderAPI extends AsyncTaskLoader<JSONArray> {
+public class JsonPlaceHolderAPI {
 
-    public JsonPlaceHolderAPI(Context context) {
-        super(context);
-    }
-
-    @Override
-    public JSONArray loadInBackground() {
+    public static JSONArray loadData(String query) {
         JSONArray jsonArray = null;
         try {
-            URL githubEndpoint = new URL("https://jsonplaceholder.typicode.com/users");
-            HttpsURLConnection myConnection = (HttpsURLConnection) githubEndpoint.openConnection();
+            URL url = new URL(query);
+            HttpsURLConnection myConnection = (HttpsURLConnection) url.openConnection();
+
 
             myConnection.setRequestProperty("User-Agent", "test-rest-app");
 
@@ -39,13 +39,28 @@ public class JsonPlaceHolderAPI extends AsyncTaskLoader<JSONArray> {
             //TODO error catch
             e.printStackTrace();
         }
-
         return jsonArray;
     }
 
-    @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        forceLoad();
+    public static Bitmap loadPicture(String urlPhoto) {
+        try {
+            URL url = new URL(urlPhoto);
+            HttpsURLConnection myConnection = (HttpsURLConnection) url.openConnection();
+
+
+            myConnection.setRequestProperty("User-Agent", "test-rest-app");
+
+            if (myConnection.getResponseCode() == 200) {
+                Bitmap myBitmap = BitmapFactory.decodeStream(myConnection.getInputStream());
+                return myBitmap;
+            } else {
+                //TODO Error handling code goes here
+            }
+        } catch (IOException e) {
+            //TODO error catch
+            return null;
+        }
+        return null;
     }
 }
+

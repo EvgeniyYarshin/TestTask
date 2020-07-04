@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:visibility="@{vm.isErrorVisible ? V.GONE : V.VISIBLE}"
                 bind:clickHandler="@{vm.onItemClickListener}"
-                bind:data="@{vm.users}"/>
+                bind:usersData="@{vm.users}"/>
 
             <include
                 layout="@layout/v_error"

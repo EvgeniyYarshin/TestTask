@@ -9,10 +9,9 @@ public class PhotosActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment getFragment() {
-        return null;
-        /*if (getIntent() != null) {
+        if (getIntent() != null) {
             return PhotosFragment.newInstance(getIntent().getBundleExtra(USERNAME_KEY));
         }
-        throw new IllegalStateException("getIntent cannot be null");*/
+        throw new IllegalStateException("getIntent cannot be null");
     }
 }

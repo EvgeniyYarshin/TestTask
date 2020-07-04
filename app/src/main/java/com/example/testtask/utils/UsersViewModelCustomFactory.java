@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.testtask.ui.users.UsersAdapter;
 import com.example.testtask.ui.users.UsersViewModel;
 
-public class CustomFactory extends ViewModelProvider.NewInstanceFactory {
+public class UsersViewModelCustomFactory extends ViewModelProvider.NewInstanceFactory {
 
     private UsersAdapter.OnItemClickListener mOnItemClickListener;
 
-    public CustomFactory(UsersAdapter.OnItemClickListener onItemClickListener) {
+    public UsersViewModelCustomFactory(UsersAdapter.OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
