@@ -11,22 +11,26 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.testtask.R;
 import com.example.testtask.databinding.PhotosBinding;
 import com.example.testtask.utils.PhotosViewModelCustomFactory;
+
+import java.util.Objects;
 
 public class PhotosFragment extends Fragment {
     public static final String PROFILE_KEY = "PROFILE_KEY";
     private PhotosViewModel mPhotosViewModel;
 
-    public static PhotosFragment newInstance(Bundle args) {
+    static PhotosFragment newInstance(Bundle args) {
         PhotosFragment fragment = new PhotosFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        Objects.requireNonNull(getActivity()).setTitle(R.string.photos);
         if (getArguments() != null) {
             int mId = getArguments().getInt(PROFILE_KEY);
             PhotosViewModelCustomFactory factory = new PhotosViewModelCustomFactory(mId);

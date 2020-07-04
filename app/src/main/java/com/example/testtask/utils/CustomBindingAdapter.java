@@ -19,16 +19,24 @@ import com.example.testtask.ui.users.UsersAdapter;
 import java.util.List;
 
 public class CustomBindingAdapter {
-    @BindingAdapter({"isRefreshingPhoto"})
+    /*@BindingAdapter({"isRefreshingPhoto"})
     public static void load(ProgressBar bar, Boolean isRefreshingPhoto) {
         bar.setVisibility(View.GONE);
+    }*/
+    @BindingAdapter({"imageUrl", "progressBar"})
+    public static void loadImage(ImageView imageView, String urlImage, ProgressBar progressBar) {
+        progressBar.setVisibility(View.VISIBLE);
+        Storage storage = ((AppDelegate) imageView.getContext().getApplicationContext()).getStorage();
+        storage.getImage(imageView, urlImage, progressBar);
+        //progressBar.setVisibility(View.GONE);
     }
 
-    @BindingAdapter({"imageUrl"})
+
+    /*@BindingAdapter({"imageUrl"})
     public static void loadImage(ImageView imageView, String urlImage) {
         Storage storage = ((AppDelegate) imageView.getContext().getApplicationContext()).getStorage();
         storage.getImage(imageView, urlImage);
-    }
+    }*/
 
     @BindingAdapter({"photosData"})
     public static void configureRecyclerView(RecyclerView recyclerView, List<Photo> photos) {
