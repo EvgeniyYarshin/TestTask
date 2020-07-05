@@ -1,60 +1,58 @@
 package com.example.testtask.ui.photos;
 
-import android.os.AsyncTask;
-
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.testtask.BuildConfig;
+import com.example.testtask.data.Storage;
 import com.example.testtask.data.api.JsonPlaceHolderAPI;
 import com.example.testtask.data.model.Album;
 import com.example.testtask.data.model.Photo;
 import com.example.testtask.ui.AbstractViewModel;
-import com.example.testtask.utils.JSONParser;
 
-import org.json.JSONArray;
 import java.util.List;
 
 public class PhotosViewModel extends AbstractViewModel {
 
     private int mUserId;
+    private Storage mStorage;
     private List<Album> albums;
-    protected MutableLiveData<List<Photo>> mPhotos = new MutableLiveData<>();
+    private JsonPlaceHolderAPI getAlbumsAsyncTask;
+    private JsonPlaceHolderAPI getPhotosAsyncTask;
+    private MutableLiveData<List<Photo>> mPhotos = new MutableLiveData<>();
 
-    public PhotosViewModel(int userId) {
+    public PhotosViewModel(Storage storage, int userId) {
+        mStorage = storage;
         mUserId = userId;
         updateData();
     }
 
     @Override
     protected void updateData() {
+        mIsErrorVisible.setValue(false);
         mIsLoading.setValue(true);
-        new AsyncTask<Void,Void,List<Album>>() {
-            @Override
-            protected List<Album> doInBackground(Void... voids) {
-                JSONArray array = JsonPlaceHolderAPI.loadData(BuildConfig.API_URL + BuildConfig.API_QUERY_ALBUMS);
-                List<Album> photos = JSONParser.getJSONAlbums(array, mUserId);
-                return photos;
-            }
-            @Override
-            protected void onPostExecute(List<Album> data) {
-                albums = data;
-            }
-        }.execute();
-
-        new AsyncTask<Void,Void,List<Photo>>() {
-            @Override
-            protected List<Photo> doInBackground(Void... voids) {
-                JSONArray array = JsonPlaceHolderAPI.loadData(BuildConfig.API_URL + BuildConfig.API_QUERY_PHOTOS);
-
-                List<Photo> photos = JSONParser.getJSONPhoto(array, albums);
-                return photos;
-            }
-            @Override
-            protected void onPostExecute(List<Photo> data) {
+        getAlbumsAsyncTask = new JsonPlaceHolderAPI(output -> {
+            if(output == null) {
+                mIsErrorVisible.setValue(true);
                 mIsLoading.setValue(false);
-                mPhotos.setValue(data);
+                return;
             }
-        }.execute();
+
+            albums = (mStorage.getAlbums(output, mUserId));
+            mIsLoading.setValue(false);
+        });
+        getAlbumsAsyncTask.execute(BuildConfig.API_URL + BuildConfig.API_QUERY_ALBUMS);
+
+        getPhotosAsyncTask = new JsonPlaceHolderAPI(output -> {
+            if(output == null) {
+                mIsErrorVisible.setValue(true);
+                mIsLoading.setValue(false);
+                return;
+            }
+
+            mPhotos.setValue(mStorage.getPhotos(output, albums));
+            mIsLoading.setValue(false);
+        });
+        getPhotosAsyncTask.execute(BuildConfig.API_URL + BuildConfig.API_QUERY_PHOTOS);
     }
 
 
@@ -65,6 +63,7 @@ public class PhotosViewModel extends AbstractViewModel {
 
     @Override
     protected void onCleared() {
-        //TODO clean up resources
+        getAlbumsAsyncTask.cancel(false);
+        getPhotosAsyncTask.cancel(false);
     }
 }

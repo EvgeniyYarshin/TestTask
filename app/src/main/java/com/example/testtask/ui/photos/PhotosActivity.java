@@ -7,9 +7,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 
+import com.example.testtask.AppDelegate;
 import com.example.testtask.common.SingleFragmentActivity;
+import com.example.testtask.data.Storage;
 
-public class PhotosActivity extends SingleFragmentActivity {
+public class PhotosActivity extends SingleFragmentActivity  implements Storage.StorageOwner {
     public static final String USERNAME_KEY = "USERNAME_KEY";
 
     @Override
@@ -37,5 +39,10 @@ public class PhotosActivity extends SingleFragmentActivity {
             return PhotosFragment.newInstance(getIntent().getBundleExtra(USERNAME_KEY));
         }
         throw new IllegalStateException("getIntent cannot be null");
+    }
+
+    @Override
+    public Storage obtainStorage() {
+        return ((AppDelegate) getApplicationContext()).getStorage();
     }
 }

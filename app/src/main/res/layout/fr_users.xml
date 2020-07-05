@@ -29,14 +29,6 @@
                 bind:clickHandler="@{vm.onItemClickListener}"
                 bind:usersData="@{vm.users}"/>
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="20dp">-->
-<!--            </LinearLayout>-->
-
-
-
             <include
                 layout="@layout/v_error"
                 android:visibility="@{vm.isErrorVisible ? V.VISIBLE : V.GONE}" />

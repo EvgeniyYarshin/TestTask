@@ -1,25 +1,25 @@
 package com.example.testtask.ui.users;
 
-import android.os.AsyncTask;
-
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.testtask.BuildConfig;
+import com.example.testtask.data.Storage;
 import com.example.testtask.data.api.JsonPlaceHolderAPI;
 import com.example.testtask.data.model.User;
 import com.example.testtask.ui.AbstractViewModel;
-import com.example.testtask.utils.JSONParser;
-
-import org.json.JSONArray;
 
 import java.util.List;
 
 public class UsersViewModel extends AbstractViewModel {
     private UsersAdapter.OnItemClickListener mOnItemClickListener;
     private MutableLiveData<List<User>> mUsers = new MutableLiveData<>();
+    private JsonPlaceHolderAPI taskAsync;
+    private Storage mStorage;
 
-    public UsersViewModel(UsersAdapter.OnItemClickListener onItemClickListener) {
+    public UsersViewModel(Storage storage, UsersAdapter.OnItemClickListener onItemClickListener) {
+        mStorage = storage;
         mOnItemClickListener = onItemClickListener;
+
         updateData();
     }
 
@@ -29,26 +29,24 @@ public class UsersViewModel extends AbstractViewModel {
 
     @Override
     protected void updateData() {
+        mIsErrorVisible.setValue(false);
         mIsLoading.setValue(true);
-        new AsyncTask<Void,Void,List<User>>() {
-            @Override
-            protected List<User> doInBackground(Void... voids) {
-                JSONArray array = JsonPlaceHolderAPI.loadData(BuildConfig.API_URL + BuildConfig.API_QUERY_USERS);
-
-                List<User> users = JSONParser.getJSONUsers(array);
-                return users;
-            }
-            @Override
-            protected void onPostExecute(List<User> data) {
-                mUsers.setValue(data);
+        taskAsync = new JsonPlaceHolderAPI(output -> {
+            if(output == null) {
+                mIsErrorVisible.setValue(true);
                 mIsLoading.setValue(false);
+                return;
             }
-        }.execute();
+
+            mUsers.setValue(mStorage.getUsers(output));
+            mIsLoading.setValue(false);
+        });
+        taskAsync.execute(BuildConfig.API_URL + BuildConfig.API_QUERY_USERS);
     }
 
     @Override
     protected void onCleared() {
-        //TODO clean up resources
+        taskAsync.cancel(false);
     }
 
     public UsersAdapter.OnItemClickListener getOnItemClickListener() {

@@ -1,21 +1,29 @@
 package com.example.testtask.data;
 
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.util.LruCache;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
-import com.example.testtask.data.api.JsonPlaceHolderAPI;
-import com.example.testtask.utils.ImageRoundCorners;
+import com.example.testtask.data.api.BitmapPlaceHolderAPI;
+import com.example.testtask.data.model.Album;
+import com.example.testtask.data.model.Photo;
+import com.example.testtask.data.model.User;
+import com.example.testtask.utils.JSONParser;
+
+import org.json.JSONArray;
+
+import java.util.List;
 
 public class Storage {
+
+    public interface BitmapStorageAsyncResponse {
+        void processFinish(Bitmap output);
+    }
+
     private LruCache<String, Bitmap> mMemoryCache;
 
     public Storage() {
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory());
-        final int cacheSize = maxMemory / 8;
+        final int cacheSize = maxMemory / 2;
 
         mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
@@ -25,49 +33,41 @@ public class Storage {
         };
     }
 
-    public void getImage(ImageView imageView, String urlImage, ProgressBar bar) {
-        imageView.setTag(urlImage);
-        bar.setVisibility(View.VISIBLE);
+    public List<User> getUsers(JSONArray jsonArray) {
+        return JSONParser.getJSONUsers(jsonArray);
+    }
+
+    public List<Photo> getPhotos(JSONArray jsonArray, List<Album> albums) {
+        return JSONParser.getJSONPhoto(jsonArray, albums);
+    }
+
+    public List<Album> getAlbums(JSONArray jsonArray, int userId) {
+        return JSONParser.getJSONAlbums(jsonArray, userId);
+    }
+
+    public void getImage(String urlImage, BitmapStorageAsyncResponse asyncResponse) {
         Bitmap bitmap = getBitmapFromMemCache(urlImage);
-        int o = 1;
         if (bitmap == null) {
-            new AsyncTask<Void, Void, Bitmap>() {
-
-                @Override
-                protected Bitmap doInBackground(Void... voids) {
-                    Bitmap bitmap = JsonPlaceHolderAPI.loadPicture(urlImage);
-
-                    return bitmap;
-                }
-
-                @Override
-                protected void onPostExecute(Bitmap data) {
-                    addBitmapToMemoryCache(urlImage, data);
-                    bar.setVisibility(View.GONE);
-                    addBitmapToImageView(imageView, data, urlImage);
-                }
-            }.execute();
+            new BitmapPlaceHolderAPI(output -> {
+                addBitmapToMemoryCache(urlImage, output);
+                asyncResponse.processFinish(output);
+            }).execute(urlImage);
         }
         else
-            addBitmapToImageView(imageView, bitmap, urlImage);
+            asyncResponse.processFinish(bitmap);
     }
 
-    public void addBitmapToImageView(ImageView imageView, Bitmap bitmap, String urlImage) {
-        imageView.setImageBitmap(null);
-        if (urlImage == imageView.getTag()) {
-            int k = 0;
-            bitmap = ImageRoundCorners.getRoundedCornerBitmap(bitmap, 6);
-            imageView.setImageBitmap(bitmap);
-        }
-    }
-
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+    private void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (getBitmapFromMemCache(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
 
-    public Bitmap getBitmapFromMemCache(String key) {
+    private Bitmap getBitmapFromMemCache(String key) {
         return mMemoryCache.get(key);
+    }
+
+    public interface StorageOwner {
+        Storage obtainStorage();
     }
 }

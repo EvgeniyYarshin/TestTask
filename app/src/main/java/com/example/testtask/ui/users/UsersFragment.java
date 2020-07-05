@@ -9,18 +9,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.testtask.R;
 import com.example.testtask.databinding.UsersBinding;
+import com.example.testtask.ui.AbstractFragment;
 import com.example.testtask.ui.photos.PhotosActivity;
 import com.example.testtask.ui.photos.PhotosFragment;
 import com.example.testtask.utils.UsersViewModelCustomFactory;
 
 import java.util.Objects;
 
-public class UsersFragment extends Fragment  {
+public class UsersFragment extends AbstractFragment {
 
     private UsersViewModel mUsersViewModel;
     private UsersAdapter.OnItemClickListener mOnItemClickListener = id -> {
@@ -31,7 +31,7 @@ public class UsersFragment extends Fragment  {
         startActivity(intent);
     };
 
-    public static UsersFragment newInstance() {
+    static UsersFragment newInstance() {
         return new UsersFragment();
     }
 
@@ -39,9 +39,8 @@ public class UsersFragment extends Fragment  {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Objects.requireNonNull(getActivity()).setTitle(R.string.users);
-        UsersViewModelCustomFactory factory = new UsersViewModelCustomFactory(mOnItemClickListener);
+        UsersViewModelCustomFactory factory = new UsersViewModelCustomFactory(storage, mOnItemClickListener);
         mUsersViewModel = ViewModelProviders.of(this, factory).get(UsersViewModel.class);
-
     }
 
     @Nullable

@@ -1,66 +1,47 @@
 package com.example.testtask.data.api;
 
-import androidx.lifecycle.LiveData;
-import androidx.loader.content.AsyncTaskLoader;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
-
 import com.example.testtask.utils.JSONParser;
-
 import org.json.JSONArray;
-
 import java.io.IOException;
 import java.net.URL;
-
 import javax.net.ssl.HttpsURLConnection;
 
-public class JsonPlaceHolderAPI {
 
-    public static JSONArray loadData(String query) {
-        JSONArray jsonArray = null;
-        try {
-            URL url = new URL(query);
-            HttpsURLConnection myConnection = (HttpsURLConnection) url.openConnection();
+public class JsonPlaceHolderAPI extends AsyncTask<String, Void, JSONArray> {
 
-
-            myConnection.setRequestProperty("User-Agent", "test-rest-app");
-
-            if (myConnection.getResponseCode() == 200) {
-                jsonArray = JSONParser.getJSONArray(myConnection.getInputStream());
-
-            } else {
-                // Error handling code goes here
-            }
-        } catch (IOException e) {
-            //TODO error catch
-            e.printStackTrace();
-        }
-        return jsonArray;
+    public interface JsonAsyncResponse {
+        void processFinish(JSONArray output);
     }
 
-    public static Bitmap loadPicture(String urlPhoto) {
+    private JsonAsyncResponse callback;
+
+    public JsonPlaceHolderAPI(JsonAsyncResponse callback) {
+        this.callback = callback;
+    }
+
+    @Override
+    protected JSONArray doInBackground(String... query) {
         try {
-            URL url = new URL(urlPhoto);
-            HttpsURLConnection myConnection = (HttpsURLConnection) url.openConnection();
+            URL url = new URL(query[0]);
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestProperty("User-Agent", "test-rest-app");
+            connection.setReadTimeout(5000);
 
-
-            myConnection.setRequestProperty("User-Agent", "test-rest-app");
-
-            if (myConnection.getResponseCode() == 200) {
-                Bitmap myBitmap = BitmapFactory.decodeStream(myConnection.getInputStream());
-                return myBitmap;
-            } else {
-                //TODO Error handling code goes here
+            if (connection.getResponseCode() == 200) {
+                return JSONParser.getJSONArray(connection.getInputStream());
             }
-        } catch (IOException e) {
-            //TODO error catch
             return null;
         }
-        return null;
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    protected void onPostExecute(JSONArray result) {
+        callback.processFinish(result);
     }
 }
 
