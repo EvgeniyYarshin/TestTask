@@ -21,13 +21,24 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_users"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="@{vm.isErrorVisible ? V.GONE : V.VISIBLE}"
-                bind:clickHandler="@{vm.onItemClickListener}"
-                bind:usersData="@{vm.users}"/>
+                android:visibility="@{vm.isErrorVisible ? V.GONE : V.VISIBLE}">
+
+                <ImageView
+                    android:id="@+id/users_background"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_users"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    bind:clickHandler="@{vm.onItemClickListener}"
+                    bind:usersData="@{vm.users}"/>
+            </RelativeLayout>
 
             <include
                 layout="@layout/v_error"

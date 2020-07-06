@@ -18,7 +18,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp">
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -36,10 +37,5 @@
                 android:background="@drawable/ic_keyboard_arrow_right_black_24dp"/>
 
         </RelativeLayout>
-        <View
-            android:layout_marginLeft="20dp"
-            android:layout_height="1sp"
-            android:layout_width="match_parent"
-            android:background="@color/colorGray"/>
     </LinearLayout>
 </layout>
