@@ -11,17 +11,15 @@ import com.example.testtask.ui.users.UsersViewModel;
 public class UsersViewModelCustomFactory extends ViewModelProvider.NewInstanceFactory {
 
     private Storage mStorage;
-    private UsersAdapter.OnItemClickListener mOnItemClickListener;
 
-    public UsersViewModelCustomFactory(Storage storage, UsersAdapter.OnItemClickListener onItemClickListener) {
+    public UsersViewModelCustomFactory(Storage storage) {
         mStorage = storage;
-        mOnItemClickListener = onItemClickListener;
     }
 
     @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new UsersViewModel(mStorage, mOnItemClickListener);
+        return (T) new UsersViewModel(mStorage);
     }
 }

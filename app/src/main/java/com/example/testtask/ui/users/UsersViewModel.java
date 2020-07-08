@@ -16,11 +16,13 @@ public class UsersViewModel extends AbstractViewModel {
     private JsonPlaceHolderAPI taskAsync;
     private Storage mStorage;
 
-    public UsersViewModel(Storage storage, UsersAdapter.OnItemClickListener onItemClickListener) {
+    public UsersViewModel(Storage storage) {
         mStorage = storage;
-        mOnItemClickListener = onItemClickListener;
-
         updateData();
+    }
+
+    void setListener(UsersAdapter.OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 
     public MutableLiveData<List<User>> getUsers() {

@@ -1,5 +1,6 @@
 package com.example.testtask.ui.users;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,7 +34,7 @@ public class UsersFragment extends AbstractFragment {
     private UsersViewModel mUsersViewModel;
 
     private UsersAdapter.OnItemClickListener mOnItemClickListener = id -> {
-        Intent intent = new Intent(getActivity(), PhotosActivity.class);
+        Intent intent = new Intent(getContext(), PhotosActivity.class);
         Bundle args = new Bundle();
         args.putInt(PhotosFragment.PROFILE_KEY, id);
         intent.putExtra(PhotosActivity.USERNAME_KEY, args);
@@ -48,8 +49,9 @@ public class UsersFragment extends AbstractFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Objects.requireNonNull(getActivity()).setTitle(R.string.users);
-        UsersViewModelCustomFactory factory = new UsersViewModelCustomFactory(storage, mOnItemClickListener);
+        UsersViewModelCustomFactory factory = new UsersViewModelCustomFactory(storage);
         mUsersViewModel = ViewModelProviders.of(this, factory).get(UsersViewModel.class);
+        mUsersViewModel.setListener(mOnItemClickListener);
     }
 
     @Nullable
