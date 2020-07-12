@@ -37,8 +37,8 @@ public class JSONParser {
                 sb.append(line).append("\n");
             }
             br.close();
+            responseBody.close();
             json = sb.toString();
-            int k = 0;
         } catch (Exception e) {
             Log.e("Buffer Error", "Error converting result " + e.toString());
         }

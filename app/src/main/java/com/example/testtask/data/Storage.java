@@ -1,6 +1,7 @@
 package com.example.testtask.data;
 
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.util.LruCache;
 
 import com.example.testtask.data.api.BitmapPlaceHolderAPI;
@@ -51,7 +52,7 @@ public class Storage {
             new BitmapPlaceHolderAPI(output -> {
                 addBitmapToMemoryCache(urlImage, output);
                 asyncResponse.processFinish(output);
-            }).execute(urlImage);
+            }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, urlImage);
         }
         else
             asyncResponse.processFinish(bitmap);

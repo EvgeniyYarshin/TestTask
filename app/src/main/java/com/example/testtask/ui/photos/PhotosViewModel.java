@@ -38,7 +38,6 @@ public class PhotosViewModel extends AbstractViewModel {
             }
 
             albums = (mStorage.getAlbums(output, mUserId));
-            mIsLoading.setValue(false);
         });
         getAlbumsAsyncTask.execute(BuildConfig.API_URL + BuildConfig.API_QUERY_ALBUMS);
 

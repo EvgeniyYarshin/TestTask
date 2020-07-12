@@ -26,11 +26,15 @@ public class JsonPlaceHolderAPI extends AsyncTask<String, Void, JSONArray> {
             URL url = new URL(query[0]);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "test-rest-app");
-            connection.setReadTimeout(5000);
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(10000);
 
             if (connection.getResponseCode() == 200) {
-                return JSONParser.getJSONArray(connection.getInputStream());
+                JSONArray jsonArray = JSONParser.getJSONArray(connection.getInputStream());
+                connection.disconnect();
+                return jsonArray;
             }
+            connection.disconnect();
             return null;
         }
         catch (IOException e) {

@@ -24,11 +24,14 @@ public class BitmapPlaceHolderAPI extends AsyncTask<String, Void, Bitmap> {
     protected Bitmap doInBackground(String... query) {
         try {
             URL url = new URL(query[0]);
-            HttpsURLConnection myConnection = (HttpsURLConnection) url.openConnection();
-            myConnection.setRequestProperty("User-Agent", "test-rest-app");
-            if (myConnection.getResponseCode() == 200) {
-                return BitmapFactory.decodeStream(myConnection.getInputStream());
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestProperty("User-Agent", "test-rest-app");
+            if (connection.getResponseCode() == 200) {
+                Bitmap bitmap = BitmapFactory.decodeStream(connection.getInputStream());
+                connection.disconnect();
+                return bitmap;
             }
+            connection.disconnect();
         }
         catch (IOException e) {
             e.printStackTrace();
